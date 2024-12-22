@@ -1,0 +1,53 @@
+﻿# Visual Studio ve .NET için genel kurallar
+.vs/
+*.user
+*.suo
+*.dbmdl
+*.mdf
+*.ldf
+*.sqlite
+*.sql
+bin/
+obj/
+Debug/
+Release/
+*.log
+
+# NuGet paketleri
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+*.props
+*.targets
+
+# Database dosyaları
+*.db
+*.bak
+
+# MaterialSkin ve DataVisualization gibi NuGet bağımlılıkları
+*.dll
+
+
+# NuGet Package Directory
+/packages/
+
+# NuGet Configuration Files
+.nuget/
+
+# NuGet Cache
+# (nuget.exe'yi kullandığınızda oluşan cache dosyaları)
+# Windows
+# .nuget/packages/
+
+# Bin ve obj klasörleri
+/bin/
+/obj/
+
+# .NET Core/SDK
+.vscode/
+.idea/
+
+# Paketleri ve bağımlılıkları yöneten dosyalar
+project.lock.json
+project.fragment.lock.json
