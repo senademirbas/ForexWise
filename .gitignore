@@ -1,53 +1,32 @@
-﻿# Visual Studio ve .NET için genel kurallar
+﻿# Visual Studio ve proje dosyaları
 .vs/
 *.user
 *.suo
-*.dbmdl
-*.mdf
-*.ldf
-*.sqlite
-*.sql
+
+# Derleme klasörleri
 bin/
 obj/
+
+# Çalışma ortamı dosyaları
 Debug/
 Release/
-*.log
 
-# NuGet paketleri
+# NuGet dosyaları
 packages/
 *.nupkg
 project.lock.json
 project.fragment.lock.json
-*.props
-*.targets
 
-# Database dosyaları
+# Gereksiz loglar ve yedekler
+*.log
 *.db
 *.bak
 
-# MaterialSkin ve DataVisualization gibi NuGet bağımlılıkları
+# Sadece belirli DLL dosyalarını hariç tut (NuGet olmayan)
 *.dll
+!ClassLibrary/**/*.cs
+!ForexWise/**/*.cs
 
-
-# NuGet Package Directory
-/packages/
-
-# NuGet Configuration Files
-.nuget/
-
-# NuGet Cache
-# (nuget.exe'yi kullandığınızda oluşan cache dosyaları)
-# Windows
-# .nuget/packages/
-
-# Bin ve obj klasörleri
-/bin/
-/obj/
-
-# .NET Core/SDK
-.vscode/
-.idea/
-
-# Paketleri ve bağımlılıkları yöneten dosyalar
-project.lock.json
-project.fragment.lock.json
+# Çözüm dosyasını koruyun
+!*.sln
+!*.csproj
