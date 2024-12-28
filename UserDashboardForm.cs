@@ -9,13 +9,10 @@ namespace ForexWise
     public partial class UserDashboardForm : Form
     {
         private readonly string _userId;
-        private readonly Database _database;
-        private readonly CurrencyApiService _currencyApiService;
         private readonly MainForm _mainForm;
+        private readonly UserDashboard _dashboard;
         private List<string> _allCurrencies = new List<string>();
         private List<string> _userCurrencies = new List<string>();
-        public TextBox txtDepositSearch = new TextBox();
-        public TextBox txtExchangeSearch = new TextBox();
 
         public UserDashboardForm(string userId, MainForm mainForm)
         {
@@ -24,10 +21,9 @@ namespace ForexWise
 
             _userId = userId;
             _mainForm = mainForm;
-            _database = new Database(@"Server=.\SQLEXPRESS;Database=ForexWise;Trusted_Connection=True;TrustServerCertificate=True");
-            _currencyApiService = new CurrencyApiService("");
+            _dashboard = new UserDashboard(userId, @"Server=.\SQLEXPRESS;Database=ForexWise;Trusted_Connection=True;TrustServerCertificate=True");
 
-            // Event handler'ları bağla
+            // Event handlers
             btnDeposit.Click += btnDeposit_Click;
             btnRefreshRates.Click += btnRefreshRates_Click;
             btnPayDebt.Click += btnPayDebt_Click;
@@ -39,17 +35,18 @@ namespace ForexWise
             txtExchangeSearch.TextChanged += TxtExchangeSearch_TextChanged;
             cboFromCurrency.SelectedIndexChanged += CboFromCurrency_SelectedIndexChanged;
 
-            LoadInitialData();
+            // Form yüklendiğinde verileri yükle
+            this.Load += async (s, e) => await LoadInitialData();
         }
 
-        private async void LoadInitialData()
+        private async Task LoadInitialData()
         {
-            try 
+            try
             {
                 await LoadUserDebts();
                 await LoadUserBalances();
                 await LoadCurrentRates();
-                await LoadCurrencyTypes(); // Kur tiplerini yükle
+                await LoadCurrencyTypes();
             }
             catch (Exception ex)
             {
@@ -59,7 +56,7 @@ namespace ForexWise
 
         private async Task LoadUserDebts()
         {
-            var debts = await _database.GetUserDebtsAsync(_userId);
+            var debts = await _dashboard.GetUserDebts();
             dgvDebts.Rows.Clear();
             foreach (var debt in debts)
             {
@@ -85,7 +82,7 @@ namespace ForexWise
 
         private async Task LoadUserBalances()
         {
-            var balances = await _database.GetUserBalancesAsync(_userId);
+            var balances = await _dashboard.GetUserBalances();
             dgvBalances.Rows.Clear();
             foreach (var balance in balances)
             {
@@ -100,11 +97,10 @@ namespace ForexWise
         {
             try
             {
-                var rates = await _currencyApiService.GetExchangeRatesAsync();
+                var rates = await _dashboard.GetCurrentRates();
                 decimal exchangeRate = rates[cboCurrency.Text];
 
-                await _database.AddDebtRecordAsync(
-                    _userId,
+                await _dashboard.AddDebt(
                     txtBorrowerUserId.Text,
                     cboCurrency.Text,
                     decimal.Parse(txtAmount.Text),
@@ -125,8 +121,7 @@ namespace ForexWise
         {
             try
             {
-                await _database.AddBalanceAsync(
-                    _userId,
+                await _dashboard.AddBalance(
                     cboDepositCurrency.Text,
                     decimal.Parse(txtDepositAmount.Text)
                 );
@@ -159,7 +154,7 @@ namespace ForexWise
         {
             try
             {
-                var rates = await _currencyApiService.GetExchangeRatesAsync();
+                var rates = await _dashboard.GetCurrentRates();
                 dgvRates.Rows.Clear();
 
                 var filteredRates = rates;
@@ -206,7 +201,7 @@ namespace ForexWise
                 var debtCurrency = selectedRow.Cells["CurrencyType"].Value?.ToString()
                     ?? throw new Exception("Para birimi bilgisi bulunamadı");
                 var remainingAmount = Convert.ToDecimal(selectedRow.Cells["RemainingAmount"].Value);
-                
+
                 // Ödenmiş borç kontrolü
                 var isPaid = selectedRow.DefaultCellStyle.ForeColor == Color.Red;
                 if (isPaid)
@@ -222,7 +217,7 @@ namespace ForexWise
                 }
 
                 // Kullanıcının seçilen para biriminde yeterli bakiyesi var mı kontrol et
-                var balances = await _database.GetUserBalancesAsync(_userId);
+                var balances = await _dashboard.GetUserBalancesAsync(_userId);
                 var currentBalance = balances.FirstOrDefault(b => b.CurrencyType == debtCurrency)?.Amount ?? 0;
 
                 if (currentBalance < paymentAmount)
@@ -232,24 +227,13 @@ namespace ForexWise
                 }
 
                 // Ödeme miktarı kalan borçtan fazla olmamalı
-                var rates = await _currencyApiService.GetExchangeRatesAsync();
-                if (!rates.ContainsKey(debtCurrency))
+                if (paymentAmount > remainingAmount)
                 {
-                    throw new Exception("Kur bilgisi bulunamadı");
-                }
-
-                // Ödeme miktarını borç para birimine çevir
-                decimal debtRate = rates[debtCurrency];
-                decimal exchangeRate = debtRate / paymentAmount;
-                decimal convertedPaymentAmount = paymentAmount * exchangeRate;
-
-                if (convertedPaymentAmount > remainingAmount)
-                {
-                    MessageBox.Show($"Ödeme miktarı kalan borç miktarından fazla olamaz. Maksimum ödeyebileceğiniz miktar: {remainingAmount / exchangeRate:N2} {debtCurrency}", "Uyarı");
+                    MessageBox.Show($"Ödeme miktarı kalan borç miktarından fazla olamaz. Maksimum ödeyebileceğiniz miktar: {remainingAmount:N2} {debtCurrency}", "Uyarı");
                     return;
                 }
 
-                await _database.PayDebtAsync(debtId, debtCurrency, paymentAmount, exchangeRate);
+                await _dashboard.PayDebtAsync(debtId, debtCurrency, paymentAmount, 1.0m); // Kur çevrimi yapılmayacak
 
                 MessageBox.Show("Borç ödemesi başarıyla gerçekleşti.", "Başarılı");
                 await LoadUserDebts();
@@ -270,7 +254,7 @@ namespace ForexWise
                 {
                     if (cboFromCurrency.SelectedItem != null && cboToCurrency.SelectedItem != null)
                     {
-                        var rates = await _currencyApiService.GetExchangeRatesAsync();
+                        var rates = await _dashboard.GetCurrentRates();
                         var fromCurrency = cboFromCurrency.SelectedItem?.ToString()
                             ?? throw new Exception("Kaynak para birimi seçilmedi");
                         var toCurrency = cboToCurrency.SelectedItem?.ToString()
@@ -285,10 +269,14 @@ namespace ForexWise
                             this.Invoke(() => lblExchangeRate.Text = $"1 {fromCurrency} = {exchangeRate:N4} {toCurrency}");
                         }
                     }
+                    else
+                    {
+                        this.Invoke(() => lblExchangeRate.Text = "→");
+                    }
                 }
                 catch
                 {
-                    this.Invoke(() => lblExchangeRate.Text = "Kur bilgisi alınamadı");
+                    this.Invoke(() => lblExchangeRate.Text = "→");
                 }
             });
         }
@@ -310,7 +298,7 @@ namespace ForexWise
                 var amount = decimal.Parse(txtExchangeAmount.Text);
 
                 // Kullanıcının bakiyesini kontrol et
-                var balances = await _database.GetUserBalancesAsync(_userId);
+                var balances = await _dashboard.GetUserBalancesAsync(_userId);
                 var currentBalance = balances.FirstOrDefault(b => b.CurrencyType == fromCurrency)?.Amount ?? 0;
 
                 if (currentBalance < amount)
@@ -320,7 +308,7 @@ namespace ForexWise
                 }
 
                 // Güncel kurları al
-                var rates = await _currencyApiService.GetExchangeRatesAsync();
+                var rates = await _dashboard.GetCurrentRates();
                 if (!rates.ContainsKey(fromCurrency) || !rates.ContainsKey(toCurrency))
                 {
                     throw new Exception("Kur bilgisi bulunamadı");
@@ -341,9 +329,9 @@ namespace ForexWise
                 if (result == DialogResult.Yes)
                 {
                     // Kaynak para birimini azalt
-                    await _database.AddBalanceAsync(_userId, fromCurrency, -amount);
+                    await _dashboard.AddBalanceAsync(_userId, fromCurrency, -amount);
                     // Hedef para birimini artır
-                    await _database.AddBalanceAsync(_userId, toCurrency, convertedAmount);
+                    await _dashboard.AddBalanceAsync(_userId, toCurrency, convertedAmount);
 
                     MessageBox.Show("Döviz değişimi başarıyla gerçekleşti.", "Başarılı");
                     await LoadUserBalances();
@@ -399,17 +387,17 @@ namespace ForexWise
                 var selectedRow = dgvDebts.SelectedRows[0];
                 var debtCurrency = selectedRow.Cells["CurrencyType"].Value?.ToString()
                     ?? throw new Exception("Para birimi bilgisi bulunamadı");
-                
+
                 if (!string.IsNullOrEmpty(debtCurrency))
                 {
                     // Seçilen borcun para birimini ComboBox'a set et
                     cboPaymentCurrency.SelectedItem = debtCurrency;
                     cboPaymentCurrency.Enabled = false; // Değiştirilemez yap
-                    
+
                     // Kullanıcının bu para birimindeki bakiyesini göster
-                    var balances = await _database.GetUserBalancesAsync(_userId);
+                    var balances = await _dashboard.GetUserBalancesAsync(_userId);
                     var currentBalance = balances.FirstOrDefault(b => b.CurrencyType == debtCurrency)?.Amount ?? 0;
-                    
+
                     txtPaymentAmount.PlaceholderText = $"Mevcut {debtCurrency} bakiyeniz: {currentBalance:N2}";
                 }
             }
@@ -438,30 +426,32 @@ namespace ForexWise
         {
             try
             {
-                // API'den tüm kurları al
-                var rates = await _currencyApiService.GetExchangeRatesAsync();
+                var rates = await _dashboard.GetCurrentRates();
                 _allCurrencies = rates.Keys.ToList();
-                
+
+                // Tüm para birimlerini borç ekleme ComboBox'ına da ekle
+                UpdateDebtCurrencyList(string.Empty);
+
                 // Kullanıcının sahip olduğu kurları al
-                var balances = await _database.GetUserBalancesAsync(_userId);
+                var balances = await _dashboard.GetUserBalancesAsync(_userId);
                 _userCurrencies = balances.Select(b => b.CurrencyType).ToList();
-                
+
                 // From ComboBox'a sadece kullanıcının sahip olduğu kurları ekle
                 cboFromCurrency.Items.Clear();
                 foreach (var currency in _userCurrencies)
                 {
                     cboFromCurrency.Items.Add(currency);
                 }
-                
+
                 // Para yükleme için ComboBox'ı güncelle
                 UpdateDepositCurrencyList(string.Empty);
-                
+
                 // Döviz değişimi için hedef para birimlerini güncelle
                 if (cboFromCurrency.SelectedItem != null)
                 {
                     UpdateExchangeToCurrencyList(string.Empty);
                 }
-                
+
                 // Varsayılan seçimler
                 if (cboFromCurrency.Items.Count > 0)
                     cboFromCurrency.SelectedIndex = 0;
@@ -478,19 +468,20 @@ namespace ForexWise
             UpdateDepositCurrencyList(searchText);
         }
 
+        // Tek bir UpdateDepositCurrencyList metodu olsun
         private void UpdateDepositCurrencyList(string searchText)
         {
             cboDepositCurrency.Items.Clear();
-            
-            var filteredCurrencies = string.IsNullOrEmpty(searchText) 
-                ? _allCurrencies 
+
+            var filteredCurrencies = string.IsNullOrEmpty(searchText)
+                ? _allCurrencies
                 : _allCurrencies.Where(c => c.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-            
+
             foreach (var currency in filteredCurrencies)
             {
                 cboDepositCurrency.Items.Add(currency);
             }
-            
+
             if (cboDepositCurrency.Items.Count > 0)
             {
                 cboDepositCurrency.SelectedIndex = 0;
@@ -506,14 +497,14 @@ namespace ForexWise
         private void UpdateExchangeToCurrencyList(string searchText)
         {
             cboToCurrency.Items.Clear();
-            
+
             var selectedFromCurrency = cboFromCurrency.SelectedItem?.ToString();
             if (selectedFromCurrency == null) return;
-            
-            var filteredCurrencies = string.IsNullOrEmpty(searchText) 
-                ? _allCurrencies 
+
+            var filteredCurrencies = string.IsNullOrEmpty(searchText)
+                ? _allCurrencies
                 : _allCurrencies.Where(c => c.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-            
+
             foreach (var currency in filteredCurrencies)
             {
                 // Seçili olan para birimini hedef listesinden çıkar
@@ -523,7 +514,7 @@ namespace ForexWise
                     cboToCurrency.Items.Add(currency);
                 }
             }
-            
+
             if (cboToCurrency.Items.Count > 0)
             {
                 cboToCurrency.SelectedIndex = 0;
@@ -534,6 +525,36 @@ namespace ForexWise
         private void CboFromCurrency_SelectedIndexChanged(object? sender, EventArgs e)
         {
             UpdateExchangeToCurrencyList(txtExchangeSearch.Text.Trim());
+        }
+
+        private void TxtDebtSearch_TextChanged(object? sender, EventArgs e)
+        {
+            string searchText = txtDebtSearch.Text.Trim().ToUpper();
+            UpdateDebtCurrencyList(searchText);
+        }
+
+        private void UpdateDebtCurrencyList(string searchText)
+        {
+            cboCurrency.Items.Clear();
+
+            var filteredCurrencies = string.IsNullOrEmpty(searchText)
+                ? _allCurrencies
+                : _allCurrencies.Where(c => c.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+
+            foreach (var currency in filteredCurrencies)
+            {
+                cboCurrency.Items.Add(currency);
+            }
+
+            if (cboCurrency.Items.Count > 0)
+            {
+                cboCurrency.SelectedIndex = 0;
+            }
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

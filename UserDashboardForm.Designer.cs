@@ -1,6 +1,6 @@
 namespace ForexWise
 {
-    public partial class UserDashboardForm : Form
+    partial class UserDashboardForm
     {
         private System.ComponentModel.IContainer components = null;
         
@@ -9,34 +9,35 @@ namespace ForexWise
         public DataGridView dgvBalances;
         public DataGridView dgvRates;
         
-        // Borç Ekleme Kontrolleri
+        // TextBoxes
         public TextBox txtBorrowerUserId;
         public TextBox txtAmount;
-        public ComboBox cboCurrency;
-        public Button btnAddDebt;
-        
-        // Para Yükleme Kontrolleri
         public TextBox txtDepositAmount;
-        public ComboBox cboDepositCurrency;
-        public Button btnDeposit;
-        
-        // Borç Ödeme Kontrolleri
         public TextBox txtPaymentAmount;
-        public ComboBox cboPaymentCurrency;
-        public Button btnPayDebt;
+        public TextBox txtExchangeAmount;
+        public TextBox txtDepositSearch;
+        public TextBox txtExchangeSearch;
+        public TextBox txtSearchRate;
+        public TextBox txtDebtSearch;
         
-        // Döviz Değişim Kontrolleri
+        // ComboBoxes
+        public ComboBox cboCurrency;
+        public ComboBox cboDepositCurrency;
+        public ComboBox cboPaymentCurrency;
         public ComboBox cboFromCurrency;
         public ComboBox cboToCurrency;
-        public TextBox txtExchangeAmount;
-        public Button btnExchange;
-        public Label lblExchangeRate;
         
-        // Diğer Kontroller
+        // Buttons
+        public Button btnAddDebt;
+        public Button btnDeposit;
+        public Button btnPayDebt;
+        public Button btnExchange;
         public Button btnRefreshRates;
-        public TextBox txtSearchRate;
+        
+        // Labels
+        public Label lblExchangeRate;
 
-        public void InitializeComponent()
+        private void InitializeComponent()
         {
             dgvDebts = new DataGridView();
             dgvBalances = new DataGridView();
@@ -60,15 +61,16 @@ namespace ForexWise
             exchangeLabel = new Label();
             depositLabel = new Label();
             txtSearchRate = new TextBox();
-            txtSearchRate.Location = new Point(1009, 56);
-            txtSearchRate.Name = "txtSearchRate";
-            txtSearchRate.PlaceholderText = "Döviz kodu girin (örn. USD)";
-            txtSearchRate.Size = new Size(200, 27);
-            txtSearchRate.TabIndex = 20;
-            txtSearchRate.KeyDown += TxtSearchRate_KeyDown;
+            txtDepositSearch = new TextBox();
+            txtExchangeSearch = new TextBox();
+            txtDebtSearch = new TextBox();
+            groupBox1 = new GroupBox();
+            groupBox2 = new GroupBox();
             ((System.ComponentModel.ISupportInitialize)dgvDebts).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvBalances).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvRates).BeginInit();
+            groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // dgvDebts
@@ -107,12 +109,12 @@ namespace ForexWise
             dgvRates.Name = "dgvRates";
             dgvRates.ReadOnly = true;
             dgvRates.RowHeadersWidth = 51;
-            dgvRates.Size = new Size(348, 254);
+            dgvRates.Size = new Size(348, 364);
             dgvRates.TabIndex = 2;
             // 
             // txtDepositAmount
             // 
-            txtDepositAmount.Location = new Point(357, 471);
+            txtDepositAmount.Location = new Point(337, 80);
             txtDepositAmount.Name = "txtDepositAmount";
             txtDepositAmount.PlaceholderText = "Yüklenecek Miktar";
             txtDepositAmount.Size = new Size(200, 27);
@@ -120,13 +122,14 @@ namespace ForexWise
             // 
             // cboDepositCurrency
             // 
-            cboDepositCurrency.Location = new Point(357, 500);
+            cboDepositCurrency.Location = new Point(337, 109);
             cboDepositCurrency.Name = "cboDepositCurrency";
             cboDepositCurrency.Size = new Size(200, 28);
+            cboDepositCurrency.TabIndex = 21;
             // 
             // btnDeposit
             // 
-            btnDeposit.Location = new Point(357, 529);
+            btnDeposit.Location = new Point(337, 138);
             btnDeposit.Name = "btnDeposit";
             btnDeposit.Size = new Size(200, 30);
             btnDeposit.TabIndex = 9;
@@ -134,7 +137,7 @@ namespace ForexWise
             // 
             // txtBorrowerUserId
             // 
-            txtBorrowerUserId.Location = new Point(1114, 369);
+            txtBorrowerUserId.Location = new Point(254, 51);
             txtBorrowerUserId.Name = "txtBorrowerUserId";
             txtBorrowerUserId.PlaceholderText = "Borçlu ID";
             txtBorrowerUserId.Size = new Size(200, 27);
@@ -142,7 +145,7 @@ namespace ForexWise
             // 
             // txtAmount
             // 
-            txtAmount.Location = new Point(1114, 398);
+            txtAmount.Location = new Point(254, 80);
             txtAmount.Name = "txtAmount";
             txtAmount.PlaceholderText = "Miktar";
             txtAmount.Size = new Size(200, 27);
@@ -151,14 +154,14 @@ namespace ForexWise
             // cboCurrency
             // 
             cboCurrency.Items.AddRange(new object[] { "USD", "EUR", "TRY" });
-            cboCurrency.Location = new Point(1114, 427);
+            cboCurrency.Location = new Point(254, 109);
             cboCurrency.Name = "cboCurrency";
             cboCurrency.Size = new Size(200, 28);
             cboCurrency.TabIndex = 5;
             // 
             // btnAddDebt
             // 
-            btnAddDebt.Location = new Point(1114, 456);
+            btnAddDebt.Location = new Point(254, 138);
             btnAddDebt.Name = "btnAddDebt";
             btnAddDebt.Size = new Size(200, 30);
             btnAddDebt.TabIndex = 6;
@@ -167,15 +170,15 @@ namespace ForexWise
             // 
             // btnRefreshRates
             // 
-            btnRefreshRates.Location = new Point(1157, 10);
+            btnRefreshRates.Location = new Point(1009, 12);
             btnRefreshRates.Name = "btnRefreshRates";
-            btnRefreshRates.Size = new Size(200, 30);
+            btnRefreshRates.Size = new Size(151, 30);
             btnRefreshRates.TabIndex = 10;
-            btnRefreshRates.Text = "Kurları Yenile";
+            btnRefreshRates.Text = "Sayfayı Yenile";
             // 
             // txtPaymentAmount
             // 
-            txtPaymentAmount.Location = new Point(1114, 506);
+            txtPaymentAmount.Location = new Point(7, 80);
             txtPaymentAmount.Name = "txtPaymentAmount";
             txtPaymentAmount.PlaceholderText = "Ödenecek Miktar";
             txtPaymentAmount.Size = new Size(200, 27);
@@ -184,14 +187,14 @@ namespace ForexWise
             // cboPaymentCurrency
             // 
             cboPaymentCurrency.Items.AddRange(new object[] { "USD", "EUR", "TRY" });
-            cboPaymentCurrency.Location = new Point(1114, 535);
+            cboPaymentCurrency.Location = new Point(7, 109);
             cboPaymentCurrency.Name = "cboPaymentCurrency";
             cboPaymentCurrency.Size = new Size(200, 28);
             cboPaymentCurrency.TabIndex = 12;
             // 
             // btnPayDebt
             // 
-            btnPayDebt.Location = new Point(1114, 564);
+            btnPayDebt.Location = new Point(7, 138);
             btnPayDebt.Name = "btnPayDebt";
             btnPayDebt.Size = new Size(200, 30);
             btnPayDebt.TabIndex = 13;
@@ -200,7 +203,7 @@ namespace ForexWise
             // cboFromCurrency
             // 
             cboFromCurrency.Items.AddRange(new object[] { "USD", "EUR", "TRY" });
-            cboFromCurrency.Location = new Point(29, 486);
+            cboFromCurrency.Location = new Point(8, 108);
             cboFromCurrency.Name = "cboFromCurrency";
             cboFromCurrency.Size = new Size(120, 28);
             cboFromCurrency.TabIndex = 15;
@@ -208,14 +211,14 @@ namespace ForexWise
             // cboToCurrency
             // 
             cboToCurrency.Items.AddRange(new object[] { "USD", "EUR", "TRY" });
-            cboToCurrency.Location = new Point(187, 486);
+            cboToCurrency.Location = new Point(179, 108);
             cboToCurrency.Name = "cboToCurrency";
             cboToCurrency.Size = new Size(120, 28);
             cboToCurrency.TabIndex = 16;
             // 
             // txtExchangeAmount
             // 
-            txtExchangeAmount.Location = new Point(29, 516);
+            txtExchangeAmount.Location = new Point(8, 138);
             txtExchangeAmount.Name = "txtExchangeAmount";
             txtExchangeAmount.PlaceholderText = "Miktar";
             txtExchangeAmount.Size = new Size(120, 27);
@@ -223,7 +226,7 @@ namespace ForexWise
             // 
             // btnExchange
             // 
-            btnExchange.Location = new Point(187, 516);
+            btnExchange.Location = new Point(179, 138);
             btnExchange.Name = "btnExchange";
             btnExchange.Size = new Size(120, 30);
             btnExchange.TabIndex = 18;
@@ -232,7 +235,7 @@ namespace ForexWise
             // lblExchangeRate
             // 
             lblExchangeRate.AutoSize = true;
-            lblExchangeRate.Location = new Point(157, 489);
+            lblExchangeRate.Location = new Point(136, 111);
             lblExchangeRate.Name = "lblExchangeRate";
             lblExchangeRate.Size = new Size(22, 20);
             lblExchangeRate.TabIndex = 19;
@@ -252,30 +255,88 @@ namespace ForexWise
             depositLabel.Size = new Size(100, 23);
             depositLabel.TabIndex = 20;
             // 
+            // txtSearchRate
+            // 
+            txtSearchRate.Location = new Point(1157, 59);
+            txtSearchRate.Name = "txtSearchRate";
+            txtSearchRate.PlaceholderText = "Döviz kodu girin (örn. USD)";
+            txtSearchRate.Size = new Size(200, 27);
+            txtSearchRate.TabIndex = 20;
+            txtSearchRate.KeyDown += TxtSearchRate_KeyDown;
+            // 
+            // txtDepositSearch
+            // 
+            txtDepositSearch.Location = new Point(372, 47);
+            txtDepositSearch.Name = "txtDepositSearch";
+            txtDepositSearch.PlaceholderText = "Döviz kodu ara...";
+            txtDepositSearch.Size = new Size(127, 27);
+            txtDepositSearch.TabIndex = 22;
+            // 
+            // txtExchangeSearch
+            // 
+            txtExchangeSearch.Location = new Point(179, 73);
+            txtExchangeSearch.Name = "txtExchangeSearch";
+            txtExchangeSearch.PlaceholderText = "Döviz kodu ara...";
+            txtExchangeSearch.Size = new Size(120, 27);
+            txtExchangeSearch.TabIndex = 23;
+            // 
+            // txtDebtSearch
+            // 
+            txtDebtSearch.Location = new Point(284, 18);
+            txtDebtSearch.Name = "txtDebtSearch";
+            txtDebtSearch.PlaceholderText = "Döviz kodu ara...";
+            txtDebtSearch.Size = new Size(119, 27);
+            txtDebtSearch.TabIndex = 24;
+            txtDebtSearch.TextChanged += TxtDebtSearch_TextChanged;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(cboPaymentCurrency);
+            groupBox1.Controls.Add(btnPayDebt);
+            groupBox1.Controls.Add(txtPaymentAmount);
+            groupBox1.Controls.Add(txtBorrowerUserId);
+            groupBox1.Controls.Add(btnAddDebt);
+            groupBox1.Controls.Add(cboCurrency);
+            groupBox1.Controls.Add(txtAmount);
+            groupBox1.Controls.Add(txtDebtSearch);
+            groupBox1.Location = new Point(715, 462);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(468, 174);
+            groupBox1.TabIndex = 25;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Defter";
+            groupBox1.Enter += groupBox1_Enter;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(txtExchangeSearch);
+            groupBox2.Controls.Add(lblExchangeRate);
+            groupBox2.Controls.Add(btnExchange);
+            groupBox2.Controls.Add(txtExchangeAmount);
+            groupBox2.Controls.Add(cboToCurrency);
+            groupBox2.Controls.Add(cboFromCurrency);
+            groupBox2.Controls.Add(txtDepositSearch);
+            groupBox2.Controls.Add(btnDeposit);
+            groupBox2.Controls.Add(txtDepositAmount);
+            groupBox2.Controls.Add(cboDepositCurrency);
+            groupBox2.Location = new Point(166, 462);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(543, 174);
+            groupBox2.TabIndex = 26;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Bakiye İşlemleri";
+            // 
             // UserDashboardForm
             // 
-            ClientSize = new Size(1378, 614);
+            ClientSize = new Size(1378, 671);
+            Controls.Add(groupBox1);
+            Controls.Add(groupBox2);
             Controls.Add(dgvDebts);
             Controls.Add(dgvBalances);
             Controls.Add(dgvRates);
-            Controls.Add(txtBorrowerUserId);
-            Controls.Add(txtAmount);
-            Controls.Add(cboCurrency);
-            Controls.Add(btnAddDebt);
             Controls.Add(btnRefreshRates);
-            Controls.Add(txtPaymentAmount);
-            Controls.Add(cboPaymentCurrency);
-            Controls.Add(btnPayDebt);
             Controls.Add(exchangeLabel);
-            Controls.Add(cboFromCurrency);
-            Controls.Add(cboToCurrency);
-            Controls.Add(txtExchangeAmount);
-            Controls.Add(btnExchange);
-            Controls.Add(lblExchangeRate);
             Controls.Add(depositLabel);
-            Controls.Add(txtDepositAmount);
-            Controls.Add(cboDepositCurrency);
-            Controls.Add(btnDeposit);
             Controls.Add(txtSearchRate);
             Name = "UserDashboardForm";
             Text = "ForexWise - Cüzdan";
@@ -283,6 +344,10 @@ namespace ForexWise
             ((System.ComponentModel.ISupportInitialize)dgvDebts).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvBalances).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvRates).EndInit();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -298,5 +363,7 @@ namespace ForexWise
 
         private Label depositLabel;
         private Label exchangeLabel;
+        private GroupBox groupBox1;
+        private GroupBox groupBox2;
     }
 }
