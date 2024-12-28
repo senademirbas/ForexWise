@@ -34,6 +34,7 @@ namespace ForexWise
         
         // Diğer Kontroller
         public Button btnRefreshRates;
+        public TextBox txtSearchRate;
 
         public void InitializeComponent()
         {
@@ -58,6 +59,13 @@ namespace ForexWise
             lblExchangeRate = new Label();
             exchangeLabel = new Label();
             depositLabel = new Label();
+            txtSearchRate = new TextBox();
+            txtSearchRate.Location = new Point(1009, 56);
+            txtSearchRate.Name = "txtSearchRate";
+            txtSearchRate.PlaceholderText = "Döviz kodu girin (örn. USD)";
+            txtSearchRate.Size = new Size(200, 27);
+            txtSearchRate.TabIndex = 20;
+            txtSearchRate.KeyDown += TxtSearchRate_KeyDown;
             ((System.ComponentModel.ISupportInitialize)dgvDebts).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvBalances).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvRates).BeginInit();
@@ -92,13 +100,14 @@ namespace ForexWise
             // dgvRates
             // 
             dgvRates.AllowUserToAddRows = false;
+            dgvRates.AllowUserToDeleteRows = false;
             dgvRates.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvRates.ColumnHeadersHeight = 29;
-            dgvRates.Location = new Point(1009, 56);
+            dgvRates.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvRates.Location = new Point(1009, 92);
             dgvRates.Name = "dgvRates";
             dgvRates.ReadOnly = true;
             dgvRates.RowHeadersWidth = 51;
-            dgvRates.Size = new Size(348, 290);
+            dgvRates.Size = new Size(348, 254);
             dgvRates.TabIndex = 2;
             // 
             // txtDepositAmount
@@ -111,11 +120,9 @@ namespace ForexWise
             // 
             // cboDepositCurrency
             // 
-            cboDepositCurrency.Items.AddRange(new object[] { "USD", "EUR", "TRY", "USD", "EUR", "TRY" });
             cboDepositCurrency.Location = new Point(357, 500);
             cboDepositCurrency.Name = "cboDepositCurrency";
             cboDepositCurrency.Size = new Size(200, 28);
-            cboDepositCurrency.TabIndex = 8;
             // 
             // btnDeposit
             // 
@@ -269,6 +276,7 @@ namespace ForexWise
             Controls.Add(txtDepositAmount);
             Controls.Add(cboDepositCurrency);
             Controls.Add(btnDeposit);
+            Controls.Add(txtSearchRate);
             Name = "UserDashboardForm";
             Text = "ForexWise - Cüzdan";
             Load += UserDashboardForm_Load;
