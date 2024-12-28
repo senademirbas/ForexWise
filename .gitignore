@@ -30,3 +30,5 @@ project.fragment.lock.json
 # Çözüm dosyasını koruyun
 !*.sln
 !*.csproj
+
+
