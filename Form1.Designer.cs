@@ -121,6 +121,74 @@
             groupBox1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
+
+            // Form ana özellikleri
+            this.BackColor = Color.FromArgb(250, 250, 250); // Beyaza yakın arka plan
+            this.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+
+            // DataGridView stil ayarları
+            dgvCurrencies.BackgroundColor = Color.White;
+            dgvCurrencies.GridColor = Color.FromArgb(224, 224, 224); // Açık gri
+            dgvCurrencies.DefaultCellStyle.BackColor = Color.White;
+            dgvCurrencies.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215); // Windows mavi
+            dgvCurrencies.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgvCurrencies.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
+            dgvCurrencies.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(70, 70, 70);
+            dgvCurrencies.EnableHeadersVisualStyles = false;
+            dgvCurrencies.BorderStyle = BorderStyle.None;
+
+            // Butonlar için stil
+            btnRefresh.BackColor = Color.FromArgb(0, 120, 215);
+            btnRefresh.ForeColor = Color.White;
+            btnRefresh.FlatStyle = FlatStyle.Flat;
+            btnRefresh.FlatAppearance.BorderSize = 0;
+            btnRefresh.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            btnRefresh.Cursor = Cursors.Hand;
+
+            btnProfile.BackColor = Color.FromArgb(0, 120, 215);
+            btnProfile.ForeColor = Color.White;
+            btnProfile.FlatStyle = FlatStyle.Flat;
+            btnProfile.FlatAppearance.BorderSize = 0;
+            btnProfile.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            btnProfile.Cursor = Cursors.Hand;
+
+            // Arama kutusu stil ayarları
+            searchTextBox.BackColor = Color.White;
+            searchTextBox.BorderStyle = BorderStyle.FixedSingle;
+            searchTextBox.Font = new Font("Segoe UI", 10F);
+
+            // GroupBox stil ayarları
+            groupBox1.BackColor = Color.White;
+            groupBox1.ForeColor = Color.FromArgb(70, 70, 70);
+            groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+
+            // Panel stil ayarları
+            pnlUserBalances.BackColor = Color.White;
+            pnlUserBalances.BorderStyle = BorderStyle.FixedSingle;
+
+            // Kullanıcı bilgi etiketi stil ayarları
+            lblUserInfo.ForeColor = Color.FromArgb(0, 120, 215);
+            lblUserInfo.Font = new Font("Segoe UI", 11F, FontStyle.Regular);
+
+            // Buton hover efektleri
+            btnRefresh.MouseEnter += (s, e) => {
+                btnRefresh.BackColor = Color.FromArgb(0, 102, 204);
+            };
+            btnRefresh.MouseLeave += (s, e) => {
+                btnRefresh.BackColor = Color.FromArgb(0, 120, 215);
+            };
+
+            btnProfile.MouseEnter += (s, e) => {
+                btnProfile.BackColor = Color.FromArgb(0, 102, 204);
+            };
+            btnProfile.MouseLeave += (s, e) => {
+                btnProfile.BackColor = Color.FromArgb(0, 120, 215);
+            };
+
+            // Form boyut ve konum ayarları
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         #endregion

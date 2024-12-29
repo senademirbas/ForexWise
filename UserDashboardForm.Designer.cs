@@ -37,6 +37,17 @@ namespace ForexWise
         // Labels
         public Label lblExchangeRate;
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
         private void InitializeComponent()
         {
             dgvDebts = new DataGridView();
@@ -166,7 +177,6 @@ namespace ForexWise
             btnAddDebt.Size = new Size(200, 30);
             btnAddDebt.TabIndex = 6;
             btnAddDebt.Text = "Borç Ekle";
-            btnAddDebt.Click += btnAddDebt_Click_1;
             // 
             // btnRefreshRates
             // 
@@ -262,7 +272,6 @@ namespace ForexWise
             txtSearchRate.PlaceholderText = "Döviz kodu girin (örn. USD)";
             txtSearchRate.Size = new Size(200, 27);
             txtSearchRate.TabIndex = 20;
-            txtSearchRate.KeyDown += TxtSearchRate_KeyDown;
             // 
             // txtDepositSearch
             // 
@@ -287,7 +296,6 @@ namespace ForexWise
             txtDebtSearch.PlaceholderText = "Döviz kodu ara...";
             txtDebtSearch.Size = new Size(119, 27);
             txtDebtSearch.TabIndex = 24;
-            txtDebtSearch.TextChanged += TxtDebtSearch_TextChanged;
             // 
             // groupBox1
             // 
@@ -305,7 +313,6 @@ namespace ForexWise
             groupBox1.TabIndex = 25;
             groupBox1.TabStop = false;
             groupBox1.Text = "Defter";
-            groupBox1.Enter += groupBox1_Enter;
             // 
             // groupBox2
             // 
@@ -338,9 +345,11 @@ namespace ForexWise
             Controls.Add(exchangeLabel);
             Controls.Add(depositLabel);
             Controls.Add(txtSearchRate);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "UserDashboardForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "ForexWise - Cüzdan";
-            Load += UserDashboardForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvDebts).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvBalances).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvRates).EndInit();
@@ -350,16 +359,103 @@ namespace ForexWise
             groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
+
+            // DataGridView stil ayarları
+            var dataGridViews = new[] { dgvDebts, dgvBalances, dgvRates };
+            foreach (var dgv in dataGridViews)
+            {
+                dgv.BackgroundColor = Color.White;
+                dgv.BorderStyle = BorderStyle.None;
+                dgv.GridColor = Color.FromArgb(224, 224, 224);
+                dgv.DefaultCellStyle.BackColor = Color.White;
+                dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
+                dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+                dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
+                dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(70, 70, 70);
+                dgv.EnableHeadersVisualStyles = false;
+                dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            }
+
+            // TextBox stil ayarları
+            var textBoxes = new[] { txtBorrowerUserId, txtAmount, txtDepositAmount, 
+                                  txtPaymentAmount, txtExchangeAmount, txtDepositSearch, 
+                                  txtExchangeSearch, txtSearchRate, txtDebtSearch };
+            foreach (var txt in textBoxes)
+            {
+                txt.BorderStyle = BorderStyle.FixedSingle;
+                txt.Font = new Font("Segoe UI", 11F);
+                txt.BackColor = Color.White;
+            }
+
+            // ComboBox stil ayarları
+            var comboBoxes = new[] { cboCurrency, cboDepositCurrency, cboPaymentCurrency, 
+                                   cboFromCurrency, cboToCurrency };
+            foreach (var cbo in comboBoxes)
+            {
+                cbo.FlatStyle = FlatStyle.Popup;
+                cbo.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+                cbo.BackColor = Color.White;
+                cbo.ForeColor = Color.FromArgb(64, 64, 64);
+                cbo.DropDownStyle = ComboBoxStyle.DropDownList;
+            }
+
+            // Button stil ayarları
+            var buttons = new[] { btnAddDebt, btnDeposit, btnPayDebt, 
+                                btnExchange, btnRefreshRates };
+            foreach (var btn in buttons)
+            {
+                btn.BackColor = Color.FromArgb(0, 120, 215);
+                btn.ForeColor = Color.White;
+                btn.FlatStyle = FlatStyle.Flat;
+                btn.FlatAppearance.BorderSize = 0;
+                btn.Font = new Font("Segoe UI", 10F);
+                btn.Cursor = Cursors.Hand;
+
+                btn.MouseEnter += (s, e) => {
+                    btn.BackColor = Color.FromArgb(0, 102, 204);
+                };
+                btn.MouseLeave += (s, e) => {
+                    btn.BackColor = Color.FromArgb(0, 120, 215);
+                };
+            }
+
+            // GroupBox stil ayarları
+            var groupBoxes = new[] { groupBox1, groupBox2 };
+            foreach (var gb in groupBoxes)
+            {
+                gb.Font = new Font("Segoe UI", 10F);
+                gb.ForeColor = Color.FromArgb(70, 70, 70);
+                gb.BackColor = Color.White;
+            }
+
+            // Form stil ayarları
+            this.BackColor = Color.FromArgb(250, 250, 250);
+            this.Font = new Font("Segoe UI", 10F);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            // Label stil ayarları
+            lblExchangeRate.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblExchangeRate.ForeColor = Color.FromArgb(0, 120, 215);
+
+            // Borç ekleme, bakiye yükleme ve döviz değiştirme arama kutularını kaldır
+            this.Controls.Remove(txtDepositSearch);
+            this.Controls.Remove(txtDebtSearch);
+            this.Controls.Remove(txtExchangeSearch);
+
+            // GroupBox'ların içindeki ilgili arama kutularını kaldır
+            groupBox1.Controls.Remove(txtDebtSearch);
+            groupBox2.Controls.Remove(txtDepositSearch);
+            groupBox2.Controls.Remove(txtExchangeSearch);
+
+            // Kur arama kutusunu koru
+            txtSearchRate.BorderStyle = BorderStyle.FixedSingle;
+            txtSearchRate.Font = new Font("Segoe UI", 11F);
+            txtSearchRate.BackColor = Color.White;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        #endregion
 
         private Label depositLabel;
         private Label exchangeLabel;
